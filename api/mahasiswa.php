@@ -6,6 +6,7 @@
  */
 
 // Header Respons API
+header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With');
@@ -69,6 +70,16 @@ switch ($method) {
 function handleGet(PDO $pdo, ?int $id): void {
     if ($id !== null && $id > 0) {
         //Percobaan 5-2 Langkah 2 jika id diberikan
+        $stmt = $pdo->prepare(SELECT id, npm, nama, program_studi, angkatan, email, created_at, FROM mahasiswa  WHERE id = :id LIMIT 1');
+        $stmt->execute([':id' => $id]);
+        $mahasiswa = $stmt->fetch();
+
+    if($mahasiswa){
+        http_response_codee(200);
+        echo json_encode(['status' => 'success' , 'data' => $mahasiswa]); 
+    } else { 
+        http_response_code(404);
+        echo json_encode(['status', => 'error', 'message' => "Mhasiswa dengan ID ($id) tidak ditemukan."]);
 
     } else {
         $search = isset($_GET['search']) ? trim($_GET['search']) : '';
